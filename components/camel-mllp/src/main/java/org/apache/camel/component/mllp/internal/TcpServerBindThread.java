@@ -24,6 +24,7 @@ import java.security.GeneralSecurityException;
 import java.time.Duration;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 
 import org.apache.camel.Route;
@@ -81,6 +82,9 @@ public class TcpServerBindThread extends Thread {
                 SSLContext sslContext = sslContextParameters.createSSLContext(consumer.getEndpoint().getCamelContext());
                 SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
                 serverSocket = sslServerSocketFactory.createServerSocket();
+
+                // Enable but don't mandate mTLS
+                ((SSLServerSocket) serverSocket).setWantClientAuth(true);
             } else {
                 serverSocket = new ServerSocket();
             }

@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.Exchange;
@@ -525,6 +526,9 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             SSLContext sslContext = sslContextParameters.createSSLContext(getEndpoint().getCamelContext());
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
             newSocket = sslSocketFactory.createSocket();
+
+            // Enable but don't mandate mTLS
+            ((SSLSocket) newSocket).setWantClientAuth(true);
         } else {
             log.debug("Creating plain socket without SSLContextParameters");
             newSocket = new Socket();
