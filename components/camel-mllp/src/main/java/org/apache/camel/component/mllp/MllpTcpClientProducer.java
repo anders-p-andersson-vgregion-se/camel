@@ -526,9 +526,6 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             SSLContext sslContext = sslContextParameters.createSSLContext(getEndpoint().getCamelContext());
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
             newSocket = sslSocketFactory.createSocket();
-
-            // Enable but don't mandate mTLS
-            ((SSLSocket) newSocket).setWantClientAuth(true);
         } else {
             log.debug("Creating plain socket without SSLContextParameters");
             newSocket = new Socket();
