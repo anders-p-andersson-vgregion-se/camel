@@ -238,6 +238,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     public void processMessage(byte[] hl7MessageBytes, TcpSocketConsumerRunnable consumerRunnable) {
         long now = System.currentTimeMillis();
+      log.error("Anders: Processing message (i början av metoden)");
 
         getEndpoint().updateLastConnectionActivityTicks(now);
         consumerRunnables.put(consumerRunnable, now);
@@ -260,7 +261,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             Message message = exchange.getIn();
 
             if (consumerRunnable.getSocket() instanceof SSLSocket sslSocket) {
+              log.error("Anders: Is SSLSocket: {}", sslSocket);
                 enrichWithClientCertInformation(sslSocket.getSession(), message);
+            } else {
+              log.error("Anders: Is not SSLSocket: {} - {}", consumerRunnable.getSocket().getClass(), consumerRunnable.getSocket());
             }
 
             if (consumerRunnable.hasLocalAddress()) {
@@ -331,18 +335,33 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
         try {
             Certificate[] certificates = sslSession.getPeerCertificates();
+            log.error("ANDERS: certificates: {}", Arrays.toString(certificates));
+
             if (certificates != null && certificates.length > 0) {
                 if (!(certificates[0] instanceof X509Certificate cert)) {
                     return;
                 }
 
                 Principal subject = cert.getSubjectX500Principal();
+                log.error("ANDERS: subject : {}", subject);
+                log.error("ANDERS: issuer: {}", cert.getIssuerX500Principal());
+
+                log.error("ANDERS: serial: {}", cert.getSerialNumber());
+                log.error("ANDERS: notBefore: {}", cert.getNotBefore());
+                log.error("ANDERS: notAfter: {}", cert.getNotAfter());
+                log.error("ANDERS: version: {}", cert.getVersion());
+                log.error("ANDERS: type: {}", cert.getType());
+                log.error("ANDERS: subject getName: {}", subject.getName());
+                log.error("ANDERS: subject toString: {}", subject.toString());
+                log.error("ANDERS: issuer getName: {}", cert.getIssuerX500Principal().getName());
+                log.error("ANDERS: issuer toString: {}", cert.getIssuerX500Principal().toString());
+
                 if (subject != null) {
-                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SUBJECT_NAME, subject.toString());
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SUBJECT_NAME, subject.getName());
                 }
                 Principal issuer = cert.getIssuerX500Principal();
                 if (issuer != null) {
-                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_ISSUER_NAME, issuer.toString());
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_ISSUER_NAME, issuer.getName());
                 }
                 BigInteger serial = cert.getSerialNumber();
                 if (serial != null) {

@@ -99,8 +99,8 @@ public class MllpMutalTlsConnectionAndHeaderBase extends CamelTestSupport {
         KeyStore ks = KeyStore.getInstance(certFile, password);
         X509Certificate certificate = (X509Certificate) ks.getCertificate("testKey");
 
-        EXPECTED_CERT_ISSUER_NAME = certificate.getIssuerX500Principal().toString();
-        EXPECTED_CERT_SUBJECT_NAME = certificate.getSubjectX500Principal().toString();
+        EXPECTED_CERT_ISSUER_NAME = certificate.getIssuerX500Principal().getName();
+        EXPECTED_CERT_SUBJECT_NAME = certificate.getSubjectX500Principal().getName();
         EXPECTED_CERT_SERIAL_NO = certificate.getSerialNumber().toString();
         EXPECTED_CERT_NOT_BEFORE = certificate.getNotBefore();
         EXPECTED_CERT_NOT_AFTER = certificate.getNotAfter();
