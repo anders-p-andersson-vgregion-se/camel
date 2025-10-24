@@ -327,48 +327,52 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
      * @param message    the message to enrich
      */
     protected void enrichWithClientCertInformation(SSLSession sslSession, Message message) {
+      log.error("Anders: enrichWithClientCertInformation(SSLSession, Message) - entering");
+      log.error("Anders: sslSession: {}", sslSession);
+      log.error("Anders: message: {}", message);
         if (sslSession == null || message == null) {
+          log.error("Anders: sslSession or message is null - returning");
             return;
         }
-
-        message.setHeader(MllpConstants.MLLP_SSL_SESSION, sslSession);
 
         try {
             Certificate[] certificates = sslSession.getPeerCertificates();
             log.error("ANDERS: certificates: {}", Arrays.toString(certificates));
 
             if (certificates != null && certificates.length > 0) {
-                if (!(certificates[0] instanceof X509Certificate cert)) {
-                    return;
-                }
+              if (!(certificates[0] instanceof X509Certificate)) {
+                return;
+              }
+              X509Certificate cert = (X509Certificate) certificates[0];
 
-                Principal subject = cert.getSubjectX500Principal();
-                log.error("ANDERS: subject : {}", subject);
-                log.error("ANDERS: issuer: {}", cert.getIssuerX500Principal());
+              Principal subject = cert.getSubjectX500Principal();
+              log.error("ANDERS: subject : {}", subject);
+              log.error("ANDERS: issuer: {}", cert.getIssuerX500Principal());
 
-                log.error("ANDERS: serial: {}", cert.getSerialNumber());
-                log.error("ANDERS: notBefore: {}", cert.getNotBefore());
-                log.error("ANDERS: notAfter: {}", cert.getNotAfter());
-                log.error("ANDERS: version: {}", cert.getVersion());
-                log.error("ANDERS: type: {}", cert.getType());
-                log.error("ANDERS: subject getName: {}", subject.getName());
-                log.error("ANDERS: subject toString: {}", subject.toString());
-                log.error("ANDERS: issuer getName: {}", cert.getIssuerX500Principal().getName());
-                log.error("ANDERS: issuer toString: {}", cert.getIssuerX500Principal().toString());
+              log.error("ANDERS: serial: {}", cert.getSerialNumber());
+              log.error("ANDERS: notBefore: {}", cert.getNotBefore());
+              log.error("ANDERS: notAfter: {}", cert.getNotAfter());
+              log.error("ANDERS: version: {}", cert.getVersion());
+              log.error("ANDERS: type: {}", cert.getType());
+              log.error("ANDERS: subject getName: {}", subject.getName());
+              log.error("ANDERS: subject toString: {}", subject.toString());
+              log.error("ANDERS: issuer getName: {}", cert.getIssuerX500Principal().getName());
+              log.error("ANDERS: issuer toString: {}", cert.getIssuerX500Principal().toString());
 
-                if (subject != null) {
-                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SUBJECT_NAME, subject.getName());
-                }
-                Principal issuer = cert.getIssuerX500Principal();
-                if (issuer != null) {
-                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_ISSUER_NAME, issuer.getName());
-                }
-                BigInteger serial = cert.getSerialNumber();
-                if (serial != null) {
-                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SERIAL_NO, serial.toString());
-                }
-                message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_BEFORE, cert.getNotBefore());
-                message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_AFTER, cert.getNotAfter());
+              if (subject != null) {
+                  message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SUBJECT_NAME, subject.getName());
+              }
+              Principal issuer = cert.getIssuerX500Principal();
+              if (issuer != null) {
+                  message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_ISSUER_NAME, issuer.getName());
+              }
+              BigInteger serial = cert.getSerialNumber();
+              if (serial != null) {
+                  message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SERIAL_NO, serial.toString());
+              }
+              message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_BEFORE, cert.getNotBefore());
+              message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_AFTER, cert.getNotAfter());
+
             }
         } catch (SSLPeerUnverifiedException e) {
             // ignore
