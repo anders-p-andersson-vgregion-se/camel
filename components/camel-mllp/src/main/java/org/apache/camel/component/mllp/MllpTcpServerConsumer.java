@@ -375,7 +375,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             }
         } catch (SSLPeerUnverifiedException e) {
-            // ignore
+          log.error("ANDERS: SSLPeerUnverifiedException: " + e.getMessage(), e);
         }
     }
 
