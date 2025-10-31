@@ -314,10 +314,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     }
 
     /**
-     * Enriches the message with client certificate details such as subject name, serial number etc.
+     * Enriches the message with client certificate details such as subject name, serial number, etc.
      * <p/>
-     * If the certificate is unverified then the headers is not enriched, except for MLLP_SSL_SESSION which is added to
-     * message headers.
+     * If the certificate is unverified then the headers is not enriched.
      *
      * @param sslSession the SSL session
      * @param message    the message to enrich
@@ -326,8 +325,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         if (sslSession == null || message == null) {
             return;
         }
-
-        message.setHeader(MllpConstants.MLLP_SSL_SESSION, sslSession);
 
         try {
             Certificate[] certificates = sslSession.getPeerCertificates();

@@ -37,9 +37,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import static org.apache.camel.support.jsse.ClientAuthentication.*;
-
 /**
  * Runnable to handle the ServerSocket.accept requests
  */

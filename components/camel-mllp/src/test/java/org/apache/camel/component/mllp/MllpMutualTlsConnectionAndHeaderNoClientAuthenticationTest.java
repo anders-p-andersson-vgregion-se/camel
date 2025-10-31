@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mllp;
 
-import javax.net.ssl.SSLSession;
-
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -25,7 +23,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Does mTLS connection with MLLP and asserts that the headers are properly set.
  */
-public class MllpMutalTlsConnectionAndHeaderNoClientAuthenticationTest extends MllpMutalTlsConnectionAndHeaderBase {
+class MllpMutualTlsConnectionAndHeaderNoClientAuthenticationTest extends MllpMutualTlsConnectionAndHeaderBase {
     /**
      * Creates test route.
      *
@@ -34,7 +32,7 @@ public class MllpMutalTlsConnectionAndHeaderNoClientAuthenticationTest extends M
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            String routeId = "mllp-ssl-sender";
+            final String routeId = "mllp-ssl-sender";
 
             public void configure() {
                 fromF(assembleEndpointUri(NO_CLIENT_AUTHENTICATION))
@@ -47,14 +45,11 @@ public class MllpMutalTlsConnectionAndHeaderNoClientAuthenticationTest extends M
     /**
      * This test does TLS connection without a client sending its certificate, that is, no mTLS. In this case, none of
      * the MLLP_SSL_CLIENT_CERT* headers should exist as the client didn't provide a certificate.
-     * <p/>
-     * The MLLP_SSL_SESSION header is asserted to not be null. This header has the SSLSession object, and since this is
-     * a TLS connection (just not mTLS), it should be present.
      *
      * @throws Exception if anything goes wrong and then should fail the test.
      */
     @Test
-    public void testSendingTlsWithNoClientCertificateToMllpConsumerWithNoClientAuthentication() throws Exception {
+    void testSendingTlsWithNoClientCertificateToMllpConsumerWithNoClientAuthentication() throws Exception {
         String hl7Message = "MSH|^~\\&|CLIENT|TEST|SERVER|ACK|20231118120000||ADT^A01|123456|T|2.6\r" +
                             "EVN|A01|20231118120000\r" +
                             "PID|1|12345|67890||DOE^JOHN||19800101|M|||123 Main St^^Springfield^IL^62704||(555)555-5555|||||S\r"
@@ -68,8 +63,6 @@ public class MllpMutalTlsConnectionAndHeaderNoClientAuthenticationTest extends M
         result.expectedHeaderReceived(MllpConstants.MLLP_SSL_CLIENT_CERT_SERIAL_NO, null);
         result.expectedHeaderReceived(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_BEFORE, null);
         result.expectedHeaderReceived(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_AFTER, null);
-        result.expectedMessagesMatches(
-                exchange -> exchange.getMessage().getHeader(MllpConstants.MLLP_SSL_SESSION, SSLSession.class) != null);
 
         template.sendBody(assembleEndpointUri(WITH_ONLY_TRUSTSTORE), hl7Message);
         result.assertIsSatisfied();
@@ -78,14 +71,11 @@ public class MllpMutalTlsConnectionAndHeaderNoClientAuthenticationTest extends M
     /**
      * As the server is configured to not do any client authentication, make sure the MLLP_SSL_CLIENT_CERT* headers are
      * not present.
-     * <p/>
-     * The MLLP_SSL_SESSION header is asserted to not be null. This header has the SSLSession object, and since this is
-     * a TLS connection (just not mTLS), it should be present.
      *
      * @throws Exception if anything goes wrong and then should fail the test.
      */
     @Test
-    public void testCommunicationWithConfiguredClientCertificateWithMllpConsumerWhichDoesNotDoClientAuthentication()
+    void testCommunicationWithConfiguredClientCertificateWithMllpConsumerWhichDoesNotDoClientAuthentication()
             throws Exception {
 
         String hl7Message = "MSH|^~\\&|CLIENT|TEST|SERVER|ACK|20231118120000||ADT^A01|123456|T|2.6\r" +
@@ -101,8 +91,6 @@ public class MllpMutalTlsConnectionAndHeaderNoClientAuthenticationTest extends M
         result.expectedHeaderReceived(MllpConstants.MLLP_SSL_CLIENT_CERT_SERIAL_NO, null);
         result.expectedHeaderReceived(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_BEFORE, null);
         result.expectedHeaderReceived(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_AFTER, null);
-        result.expectedMessagesMatches(
-                exchange -> exchange.getMessage().getHeader(MllpConstants.MLLP_SSL_SESSION, SSLSession.class) != null);
 
         // Any sslContextParameter with a client certificate should be valid here, but the worst case scenario for this test
         // should be the context with the server flag for requiring client authentication. That flag should not matter,

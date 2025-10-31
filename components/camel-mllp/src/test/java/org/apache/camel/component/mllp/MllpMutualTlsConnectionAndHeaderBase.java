@@ -36,7 +36,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 /**
  * Does mTLS connection with MLLP and asserts that the headers are properly set.
  */
-public class MllpMutalTlsConnectionAndHeaderBase extends CamelTestSupport {
+public class MllpMutualTlsConnectionAndHeaderBase extends CamelTestSupport {
 
     public static final String WANTS_CLIENT_AUTHENTICATION = "sslContextParametersWantsClientAuthentication";
     public static final String REQUIRES_CLIENT_AUTHENTICATION = "sslContextParametersRequiresClientAuthentication";

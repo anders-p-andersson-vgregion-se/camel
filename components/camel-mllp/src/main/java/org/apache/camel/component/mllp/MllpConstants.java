@@ -26,8 +26,6 @@ public final class MllpConstants {
     public static final String MLLP_LOCAL_ADDRESS = "CamelMllpLocalAddress";
     @Metadata(description = "The remote TCP Address of the Socket", javaType = "String")
     public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
-    @Metadata(description = "The SSL session", label = "consumer", javaType = "javax.net.ssl.SSLSession")
-    public static final String MLLP_SSL_SESSION = "CamelMllpSslSession";
     @Metadata(description = "The SSL client certificate subject name", label = "consumer", javaType = "String")
     public static final String MLLP_SSL_CLIENT_CERT_SUBJECT_NAME = "CamelMllpSslClientCertSubjectName";
     @Metadata(description = "The SSL client certificate issuer name", label = "consumer", javaType = "String")
